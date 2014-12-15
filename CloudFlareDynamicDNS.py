@@ -13,10 +13,12 @@ data={'a': 'rec_load_all','tkn': cloudflareAPIkey,'email': cloudflareEmail,'z': 
 data = urllib.urlencode(data)
 f = urllib.urlopen("https://www.cloudflare.com/api_json.html", data)
 recloadall=f.read()
+#print recloadall
 recloadall=recloadall[0:recloadall.find('"display_name":"'+str(recordName)+'","type":"'+str(recordType)+'"')]
-recordID=recloadall[recloadall.rfind("rec_id")+9:recloadall.rfind("rec_tag")-3]
+recordID=recloadall[recloadall.rfind("rec_id")+9:recloadall.find('","',recloadall.rfind("rec_id")+9)]
+
 if recordID.find(':"error"')>-1:
-	recordID=recordID[recordID.find('"msg":"')+6:recordID.find(",",recordID.find('"msg":"')+3)]
+        recordID=recordID[recordID.find('"msg":"')+6:recordID.find(",",recordID.find('"msg":"')+3)]
 print "CF Record:",recordID
 
 #Get your current device IP Address
@@ -30,4 +32,5 @@ data={'a': 'rec_edit','tkn': cloudflareAPIkey,'id': recordID,'email': cloudflare
 data = urllib.urlencode(data)
 f = urllib.urlopen("https://www.cloudflare.com/api_json.html", data)
 response=f.read()
+#print response
 print "Update:",response[response.find('result":')+9:response.find(',',response.find('result":')+3)-1]
